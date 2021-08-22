@@ -39,6 +39,8 @@ jobs:
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
       - name: Install dependencies
+        env:
+          RAILS_ENV: test
         run: |
           gem install bundler
           bundle install --jobs 4 --retry 3
@@ -47,4 +49,4 @@ jobs:
           bundler exec rails db:create RAILS_ENV=test
           bundler exec rails db:migrate RAILS_ENV=test
       - name: Run tests
-        run: bundler exec rspec
+        run: bundle exec rspec
