@@ -15,20 +15,20 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.5.x
-      - name: Rubocop
+      # - name: Rubocop
+      #   run: |
+      #     bundle exec rubocop
+      - name: Build and run tests
+        env:
+          DATABASE_URL: postgres://postgres:@localhost:5432/test
+          RAILS_ENV: test
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
-          bundle exec rubocop
-#       - name: Build and run tests
-#         env:
-#           DATABASE_URL: postgres://postgres:@localhost:5432/test
-#           RAILS_ENV: test
-#           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-#         run: |
-#           sudo apt-get -yqq install libpq-dev
-#           gem install bundler
-#           bundle install --jobs 4 --retry 3
-#           bundle exec rails db:prepare
-#           bundle exec rspec
+          sudo apt-get -yqq install libpq-dev
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:prepare
+          bundle exec rspec
