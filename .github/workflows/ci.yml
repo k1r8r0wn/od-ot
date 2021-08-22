@@ -1,42 +1,48 @@
 name: CI
+
 on: [push, pull_request]
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  rspec:
+   runs-on: ubuntu-latest
+    container:
+      image: ruby:2.5.9
+
     services:
-      db:
-        image: postgres:10
-        ports: ['5432:5432']
+      postgres:
+        image: postgres:10.3
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.5.9
-      - name: Build and run checks/tests
-        env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/ci_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          RAILS_ENV: test
-          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: |
-          sudo apt-get -yqq install libpq-dev
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          cp config/database.yml.github-actions config/database.yml
-          psql -c 'create database ci_test;' -U postgres
-          bundle exec rake db:migrate
-          bundle exec rubocop
-          bundle exec rails_best_practices .
-          bundle exec bundle-audit check --update
-          bundle exec brakeman
-          bundle exec rspec
+    - uses: actions/checkout@v1
+
+    - name: Gem cache
+      id: cache-bundle
+      uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+
+    - name: Bundle install
+      env:
+        RAILS_ENV: test
+      run: |
+        gem install bundler
+        bundle install --jobs 4 --retry 3 --path vendor/bundle
+
+    - name: Setup DB, Run tests
+      env:
+        PGHOST: postgres
+        PGUSER: postgres
+        PGPORT: ${{ job.services.postgres.ports[5432] }}
+        RAILS_ENV: test
+      run: |
+        bin/rails db:create db:schema:load
+        bundle exec rspec
