@@ -19,7 +19,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.5.x
+          ruby-version: 2.5.9
       # - name: Rubocop
       #   run: |
       #     bundle exec rubocop
