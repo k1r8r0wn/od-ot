@@ -8,7 +8,8 @@ jobs:
         image: postgres:10
         ports: ['5432:5432']
         env:
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -23,13 +24,16 @@ jobs:
       - name: Build and run checks/tests
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
           RAILS_ENV: test
           RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
         run: |
           sudo apt-get -yqq install libpq-dev
           gem install bundler
-          bundle install --jobs 4 --retry 3
-          bundle exec rake db:migrate       
+          bundle install --jobs 4 --retry 3     
+          cp config/database.yml.github-actions config/database.yml
+          bundle exec rake db:migrate
           bundle exec rubocop
           bundle exec rails_best_practices .
           bundle exec bundle-audit check --update
