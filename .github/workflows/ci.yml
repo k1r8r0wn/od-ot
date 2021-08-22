@@ -23,7 +23,7 @@ jobs:
           ruby-version: 2.5.9
       - name: Build and run checks/tests
         env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/test
+          DATABASE_URL: postgres://postgres:@localhost:5432/ci_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           RAILS_ENV: test
