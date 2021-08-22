@@ -2,11 +2,13 @@ env:
   RUBY_VERSION: 2.5.9
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  POSTGRES_DB: ci_test
 
 name: Rails tests
+
 on: [push,pull_request]
+
 jobs:
+
   rubocop-test:
     name: Rubocop
     runs-on: ubuntu-latest
@@ -19,6 +21,7 @@ jobs:
         run: gem install rubocop
       - name: Check code
         run: rubocop
+
   rspec-test:
     name: RSpec
     needs: rubocop-test
@@ -31,19 +34,31 @@ jobs:
         env:
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
+
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
+      
+      - name: Gem cache
+        id: cache-bundle
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+      
       - name: Install dependencies
         env:
           RAILS_ENV: test
         run: |
           gem install bundler:1.17.3
-          bundle install --jobs 4 --retry 3
+          bundle install --jobs 4 --retry 3 --path vendor/bundle
+
       - name: Create database
         env:
           RAILS_ENV: test
@@ -51,5 +66,6 @@ jobs:
           cp config/database.yml.travis config/database.yml
           bundle exec rails db:create
           bundle exec rails db:migrate
+      
       - name: Run tests
         run: bundle exec rspec
