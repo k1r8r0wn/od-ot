@@ -88,7 +88,7 @@ Rails.application.configure do
     password: ENV['MAILGUN_SMTP_PASSWORD'],
     domain: 'od-ot.herokuapp.com',
     authentication: :plain,
-  }  
+  }
 
   ActionMailer::Base.delivery_method = :smtp
 end
