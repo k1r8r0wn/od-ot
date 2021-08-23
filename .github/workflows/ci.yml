@@ -1,15 +1,15 @@
 env:
   RUBY_VERSION: 2.5.9
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
+  PG_USER: postgres
+  PG_PASSWORD: postgres
 
-name: Rails tests
+name: CI
 
-on: [push,pull_request]
+on: [push, pull_request]
 
 jobs:
 
-  rubocop-test:
+  rubocop:
     name: Rubocop
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +22,7 @@ jobs:
       - name: Check code
         run: rubocop
 
-  rspec-test:
+  rspec:
     name: RSpec
     needs: rubocop-test
     runs-on: ubuntu-latest
@@ -32,8 +32,8 @@ jobs:
         ports:
         - 5432:5432
         env:
-          POSTGRES_USER: ${{ env.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          PG_USER: ${{ env.PG_USER}}
+          PG_PASSWORD: ${{ env.PG_PASSWORD }}
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
@@ -59,11 +59,21 @@ jobs:
           gem install bundler:1.17.3
           bundle install --jobs 4 --retry 3 --path vendor/bundle
 
-      - name: Create database
+      - name: Setup database
         env:
           RAILS_ENV: test
+          PG_HOST: localhost
+          PG_USER: ${{ env.PG_USER }}
+          PG_PASSWORD: ${{ env.PG_PASSWORD }}
         run: |
+          pwd
+          ls -la
           bin/rails db:create db:schema:load
-      
+
       - name: Run tests
+        env:
+          RAILS_ENV: test
+          PG_HOST: localhost
+          PG_USER: ${{ env.PG_USER }}
+          PG_PASSWORD: ${{ env.PG_PASSWORD }}
         run: bundle exec rspec
