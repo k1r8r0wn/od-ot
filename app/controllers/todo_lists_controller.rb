@@ -46,8 +46,6 @@ class TodoListsController < ApplicationController
     else
       redirect_to todo_list_todo_items_path(@todo_list), error: 'Todo list could not be sent.'
     end
-  rescue StandardError
-    redirect_to todo_list_todo_items_path(@todo_list), error: 'Sorry, Todo list could not be sent.'
   end
 
   private
