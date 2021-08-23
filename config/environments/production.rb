@@ -80,15 +80,12 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'https://od-ot.herokuapp.com' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-
-  ActionMailer::Base.smtp_settings = {
-    port: ENV['MAILGUN_SMTP_PORT'],
-    address: ENV['MAILGUN_SMTP_SERVER'],
-    user_name: ENV['MAILGUN_SMTP_LOGIN'],
-    password: ENV['MAILGUN_SMTP_PASSWORD'],
-    domain: 'od-ot.herokuapp.com',
-    authentication: :plain,
+  config.action_mailer.smtp_settings = {
+    user_name: 'c48bdefd48c589',
+    password: '5a270afc4500a5',
+    address: 'smtp.mailtrap.io',
+    domain: 'smtp.mailtrap.io',
+    port: '2525',
+    authentication: :cram_md5
   }
-
-  ActionMailer::Base.delivery_method = :smtp
 end
