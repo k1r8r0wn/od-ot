@@ -26,6 +26,8 @@ class User < ApplicationRecord
     end
   end
 
+  private
+
   def default_todo_items_content
     [
       'Add a todo list or item by clicking or tapping the \'+\' button at the right top.',
