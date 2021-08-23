@@ -39,7 +39,6 @@ class TodoListsController < ApplicationController
   end
 
   def email
-    destination = params[:destination]
     redirect_to todo_list_todo_items_path(@todo_list), error: 'Sorry, Todo list could not be sent.'
   end
 
