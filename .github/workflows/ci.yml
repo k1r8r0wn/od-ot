@@ -24,7 +24,7 @@ jobs:
 
   rspec:
     name: RSpec
-    needs: rubocop-test
+    needs: rubocop
     runs-on: ubuntu-latest
     services:
       postgres:
