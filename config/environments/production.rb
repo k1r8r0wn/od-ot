@@ -88,4 +88,5 @@ Rails.application.configure do
     port: '2525',
     authentication: :cram_md5
   }
+  ActionMailer::Base.delivery_method = :smtp
 end
