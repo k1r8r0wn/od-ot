@@ -16,18 +16,19 @@ jobs:
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - name: Gem cache
+
+      - name: Gems cache
         id: cache-bundle
         uses: actions/cache@v1
         with:
           path: vendor/bundle
           key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+
       - name: Install dependencies
-        env:
-          RAILS_ENV: test
         run: |
           gem install bundler:1.17.3
           bundle install --jobs 4 --retry 3 --path vendor/bundle
+
       - name: Run checks
         run: | 
           bundle exec rubocop
@@ -58,16 +59,14 @@ jobs:
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
       
-      - name: Gem cache
-        id: cache-bundle
-        uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+      # - name: Gem cache
+      #   id: cache-bundle
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: vendor/bundle
+      #     key: bundle-${{ hashFiles('**/Gemfile.lock') }}
       
       - name: Install dependencies
-        env:
-          RAILS_ENV: test
         run: |
           gem install bundler:1.17.3
           bundle install --jobs 4 --retry 3 --path vendor/bundle
@@ -80,6 +79,4 @@ jobs:
           bin/rails db:create db:schema:load
 
       - name: Run tests
-        env:
-          RAILS_ENV: test
         run: bundle exec rspec
