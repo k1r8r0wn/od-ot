@@ -8,19 +8,26 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-
-  rubocop:
-    name: Rubocop
+  check_code:
+    name: Check code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - name: Install Rubocop
-        run: gem install rubocop
-      - name: Check code
-        run: rubocop
+      - name: Install related Gems
+        run: |
+          gem install rubocop
+          gem install rails_best_practices
+          gem install bundle-audit
+          gem install brakeman
+      - name: Run checks
+        run: | 
+          rubocop
+          rails_best_practices .
+          bundle-audit check --update
+          brakeman
 
   rspec:
     name: RSpec
