@@ -1,5 +1,3 @@
-require 'uri'
-
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -82,16 +80,12 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: 'https://od-ot.herokuapp.com' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
-
-  mailertogo = URI.parse ENV['MAILERTOGO_URL']
-  mailertogo_domain = ENV['MAILERTOGO_DOMAIN']
-
   config.action_mailer.smtp_settings = {
-    address: mailertogo.host,
-    port: mailertogo.port,
-    user_name: mailertogo.user,
-    password: mailertogo.password,
-    domain: mailertogo_domain,
+    address: ENV['MAILERTOGO_HOST'],
+    port: ENV['MAILERTOGO_PORT'],
+    user_name: ENV['MAILERTOGO_USER_NAME'],
+    password: ENV['MAILERTOGO_PASSWORD'],
+    domain: ENV['MAILERTOGO_DOMAIN'],
     authentication: :plain,
     enable_starttls_auto: true,
   }
