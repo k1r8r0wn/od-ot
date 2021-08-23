@@ -3,6 +3,7 @@ class PasswordResetsController < ApplicationController
 
   def new; end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def create
     user = User.find_by(email: params[:email])
     if user
@@ -14,10 +15,11 @@ class PasswordResetsController < ApplicationController
       flash.now[:notice] = 'Email not found.'
       render 'new'
     end
-  rescue
+  rescue StandardError
     flash[:error] = "Sorry, you can't reset you password."
     redirect_to sign_in_path
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def edit
     render file: 'public/404.html', status: :not_found, layout: false unless @user
