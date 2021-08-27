@@ -6,11 +6,22 @@ services:
       # Postgres folder for data
       - $PWD/docker/containers/postgres/data/var/lib/postgresql/data:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - '5432:5432'
 
   web:
     ports:
-      - 3000:3000
+      - '3000:3000'
+    links:
+      - mailcatcher
     # For using pry inside docker container
     stdin_open: true
     tty: true
+
+  mailcatcher:
+    build:
+      context: .
+      dockerfile: ./docker/containers/mailcatcher/Dockerfile
+    ports:
+      - '1025:1025'
+      - '1080:1080'
+    command: mailcatcher --smtp-ip=0.0.0.0 --http-ip=0.0.0.0 --http-port=1080 --smtp-port=1025 --foreground

@@ -10,4 +10,6 @@ WORKDIR /home/deploy/od-ot
 ADD Gemfile /home/deploy/od-ot
 ADD Gemfile.lock /home/deploy/od-ot
 
+ENV BUNDLER_VERSION 1.17.3
+RUN gem install bundler -v $BUNDLER_VERSION
 RUN bundle install

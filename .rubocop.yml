@@ -1,6 +1,7 @@
 # require: rubocop-rspec
 
 AllCops:
+  NewCops: disable
   DisplayCopNames: true
   StyleGuideCopsOnly: false
   TargetRubyVersion: 2.5.9
