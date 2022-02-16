@@ -4,7 +4,7 @@ AllCops:
   NewCops: disable
   DisplayCopNames: true
   StyleGuideCopsOnly: false
-  TargetRubyVersion: 2.5.9
+  TargetRubyVersion: 2.7.5
   Exclude:
     - db/**/*
     - script/**/*

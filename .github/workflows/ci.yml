@@ -1,5 +1,5 @@
 env:
-  RUBY_VERSION: 2.5.9
+  RUBY_VERSION: 2.7.5
   PG_USER: postgres
   PG_PASSWORD: postgres
 
