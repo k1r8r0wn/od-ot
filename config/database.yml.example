@@ -5,7 +5,7 @@ default: &default
   username: <%= ENV['POSTGRES_USERNAME'] || postgres %>
   password: <%= ENV['POSTGRES_PASSWORD'] || password %>
   host: <%= ENV['POSTGRES_HOST'] || db %>
-  port: <%= ENV['POSTGRES_HOST'] || 5432 %>
+  port: <%= ENV['POSTGRES_PORT'] || 5432 %>
 
 development:
   <<: *default

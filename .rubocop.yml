@@ -4,7 +4,7 @@ AllCops:
   NewCops: disable
   DisplayCopNames: true
   StyleGuideCopsOnly: false
-  TargetRubyVersion: 2.7.5
+  TargetRubyVersion: 2.5 # Code Climate supports only v2.5 max now
   Exclude:
     - db/**/*
     - script/**/*

@@ -23,7 +23,7 @@ gem 'pundit'
 
 gem 'sprockets-es6'
 
-group :development, :test do
+group :development, :test, :ci do
   gem 'byebug', platform: :mri
   gem 'rails_best_practices'
   gem 'rubocop'
@@ -47,7 +47,7 @@ group :development do
   gem 'bundler-audit'
 end
 
-group :test do
+group :test, :ci do
   gem 'capybara'
   gem 'shoulda-matchers'
   gem 'capybara-email', '~> 2.5'
