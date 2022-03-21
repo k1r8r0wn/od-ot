@@ -1,0 +1,31 @@
+name: Cache restoration
+description: Setup a Ruby environment and restore cache
+
+inputs:
+  ruby-version:
+    description: Ruby version to use, default to 2.7.5
+    required: true
+    default: 2.7.5
+outputs:
+  cache-hit:
+    description: Forward actions/cache cache-hit output
+    value: ${{ steps.bundler-cache.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Use Ruby 2.7.5
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.7.5
+
+    - name: Install Bundler
+      shell: bash
+      run: gem install bundler:1.17.3
+
+    - name: Cache Bundler stuff
+      id: bundler-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: bundle-${{ hashFiles('**/Gemfile.lock') }}

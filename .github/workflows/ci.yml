@@ -1,6 +1,5 @@
 env:
   RUBY_VERSION: 2.7.5
-  BUNDLER_VERSION: 1.17.3
   RAILS_ENV: ci
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
@@ -16,17 +15,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
+      - uses: ./.github/actions/cache-restore
+        id: cache-bundler
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - uses: actions/cache@v2
-        id: cache-bundle
-        with:
-          path: vendor/bundle
-          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
       - run: |
-          gem install bundler:${{ env.BUNDLER_VERSION }}
           bundle install --jobs 4 --retry 3 --path vendor/bundle
+        # Install dependencies only if there were not found in the cache
+        if: steps.cache-bundler.outputs.cache-hit != 'true'
 
   lint:
     name: Lint
@@ -35,19 +31,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
+      - uses: ./.github/actions/cache-restore
+        id: cache-bundler
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - uses: actions/cache@v2
-        id: cache-bundle
-        with:
-          path: vendor/bundle
-          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
 
-      - name: Install Bundler & Gems
-        run: |
-          gem install bundler:1.17.3
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
+      - name: Install Gems
+        run: bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Run linters
         run: |
@@ -72,22 +62,16 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-ruby@v1
+      - uses: ./.github/actions/cache-restore
+        id: cache-bundler
         with:
           ruby-version: ${{ env.RUBY_VERSION }}
-      - uses: actions/cache@v2
-        id: cache-bundle
-        with:
-          path: vendor/bundle
-          key: bundle-${{ hashFiles('**/Gemfile.lock') }}
+
+      - name: Install Gems
+        run: bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Install postgres client
         run: sudo apt-get install libpq-dev
-
-      - name: Install Bundler & Gems
-        run: |
-          gem install bundler:1.17.3
-          bundle install --jobs 4 --retry 3 --path vendor/bundle
 
       - name: Setup DB
         env:
@@ -104,4 +88,4 @@ jobs:
           RAILS_ENV: ${{ env.RAILS_ENV }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
-        run: COVERAGE=true bundle exec rspec --require rails_helper
+        run: bundle exec rspec
