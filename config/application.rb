@@ -32,5 +32,8 @@ module Odot
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.action_view.field_error_proc = Proc.new {|html, instance| html}
+
+    # Tune HTTP security headers
+    config.action_dispatch.default_headers = { "X-Frame-Options" => "DENY" }
   end
 end
