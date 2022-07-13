@@ -20,7 +20,7 @@ AllCops:
     - ./Gemfile
     - ./Rakefile
     - ./config.ru
-Gemspec/DateAssignment:
+Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 Layout/LineLength:
   Enabled: true
