@@ -3,9 +3,9 @@ description: Setup a Ruby environment and restore cache
 
 inputs:
   ruby-version:
-    description: Ruby version to use, default to 2.7
+    description: Ruby version to use, default to 2.7.x
     required: true
-    default: 2.7
+    default: '2.7'
 outputs:
   cache-hit:
     description: Forward actions/cache cache-hit output
@@ -14,10 +14,10 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Use Ruby 2.7
-      uses: actions/setup-ruby@v1
+    - name: Use Ruby 2.7.x
+      uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
+        ruby-version: '2.7'
 
     - name: Install Bundler
       shell: bash
